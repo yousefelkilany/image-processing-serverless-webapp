@@ -20,7 +20,7 @@ const t = useTranslations(lang);
         />Spark</a
       >
     </li>
-    <li class="hidden md:block">
+    <!-- <li class="hidden md:block">
       <a data-astro-prefetch class="link" href={`/${lang}/blog/`}
         >{t("nav.blog")}</a
       >
@@ -34,12 +34,18 @@ const t = useTranslations(lang);
       <a data-astro-prefetch class="link" href={`/${lang}/faq/`}
         >{t("nav.faq")}</a
       >
+    </li> -->
+    <li class="hidden md:block">
+      <a data-astro-prefetch class="link" href={`/${lang}/img-upload`}
+        >{t("nav.imageUpload")}</a
+      >
     </li>
     <li class="hidden md:block">
       <a data-astro-prefetch class="link" href={`/${lang}/contact/`}
         >{t("nav.contact")}</a
       >
     </li>
+
     <li class="flex md:hidden">
       <button
         title="menu"
@@ -100,7 +106,7 @@ const t = useTranslations(lang);
     x-collapse
     class="transition-all flex flex-col justify-center items-center gap-2 pt-2 pb-4 drop-shadow-md bg-white absolute -left-4 -right-4 md:hidden"
   >
-    <li class="flex w-full">
+    <!-- <li class="flex w-full">
       <a
         data-astro-prefetch
         class="link py-2 mx-auto w-full text-center"
@@ -120,12 +126,19 @@ const t = useTranslations(lang);
         class="link py-2 mx-auto w-full text-center"
         href={`/${lang}/faq/`}>{t("nav.faq")}</a
       >
-    </li>
+    </li> -->
     <li class="flex w-full">
       <a
         data-astro-prefetch
         class="link py-2 mx-auto w-full text-center"
         href={`/${lang}/contact/`}>{t("nav.contact")}</a
+      >
+    </li>
+    <li class="flex w-full">
+      <a
+        data-astro-prefetch
+        class="link py-2 mx-auto w-full text-center"
+        href={`/${lang}/img-upload`}>Upload Image</a
       >
     </li>
   </ul>

@@ -1,5 +1,12 @@
 export const ui = {
   en: {
+    "imageUpload.title": "Image Upload",
+    "imageUpload.heading": "Image Upload",
+    "imageUpload.description": "Image Upload service description goes here, just enough for user to know, generate via gemini",
+    "imageUpload.button": "Upload image",
+    "imageUpload.label": "Upload image",
+    "imageUpload.anotherLabel": "Upload another image",
+    "imageUpload.clearImage": "Clear Image",
     "layout.test": "Spark",
     "hero.title": " the best minimal astro starter template!",
     "hero.description":
@@ -21,6 +28,7 @@ export const ui = {
     "nav.faq": "faq",
     "nav.contact": "contact",
     "nav.blog": "blog",
+    "nav.imageUpload": "Image Upload",
     "footer.copyright":
       "Spark Theme. All rights reserved. This project is independent of and not endorsed or sponsored by Astro or Tailwind Labs.",
     "footer.createdBy": "Created by",
@@ -105,6 +113,13 @@ export const ui = {
       "A responsive, interactive list item (<li>) that functions as an icon card with an image and title, using Tailwind CSS for styling.",
   },
   ar: {
+    "imageUpload.title": "رفع الصورة",
+    "imageUpload.heading": "رفع الصورة",
+    "imageUpload.description": "وصف خدمة رفع الصورة يذهب هنا، يكفي للمستخدم لمعرفته، تم إنشاؤه عبر Gemini",
+    "imageUpload.button": "رفع صورة",
+    "imageUpload.label": "رفع صورة",
+    "imageUpload.anotherLabel": "رفع صورة أخرى",
+    "imageUpload.clearImage": "مسح الصورة",
     "layout.test": "شرارة",
     "hero.title": "أفضل قالب أسترو الأولي البسيط!",
     "hero.description": "أطلق مشاريع أسترو بسهولة وأناقة. تصميم بسيط، ووظائف قصوى. سواء كنت متمرسًا أو جديدًا، يبسط Spark تطويرك لمواقع أسترو المذهلة.",
@@ -122,6 +137,7 @@ export const ui = {
     "nav.faq": "الأسئلة الشائعة",
     "nav.contact": "اتصال",
     "nav.blog": "مدونة",
+    "nav.imageUpload": "رفع الصورة",
     "footer.copyright": "ثيم Spark. جميع الحقوق محفوظة. هذا المشروع مستقل ولا تدعمه أو ترعاه Astro أو Tailwind Labs.",
     "footer.createdBy": "أنشئ بواسطة",
     "footer.createdBy2": "مع Astro و Tailwind من مدينة بيربيك الجميلة، بلجيكا.",

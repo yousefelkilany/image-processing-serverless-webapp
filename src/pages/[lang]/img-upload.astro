@@ -1,0 +1,363 @@
+---
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import Layout from "../../layouts/Layout.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+if (Astro.request.method === "POST") {
+    try {
+        const data = await Astro.request.formData();
+        const file = data.get("file");
+
+        if (file && typeof file === "object" && file.name) {
+            // Here you would handle the file upload, e.g., save it to disk, upload to cloud storage, etc.
+            // For demonstration, we'll just acknowledge receipt.
+            console.log(
+                "Received file:",
+                file.name,
+                "of type",
+                file.type,
+                "and size",
+                file.size,
+            );
+            return new Response(
+                JSON.stringify({
+                    message: "File uploaded successfully!",
+                    filename: file.name,
+                }),
+                {
+                    status: 200,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+        } else {
+            return new Response(
+                JSON.stringify({
+                    message: "No file uploaded or invalid file data.",
+                }),
+                {
+                    status: 400,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+        }
+    } catch (error) {
+        console.error("Error handling upload:", error);
+        return new Response(
+            JSON.stringify({ message: "Error processing file upload." }),
+            {
+                status: 500,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            },
+        );
+    }
+}
+---
+
+<Layout title={t("imageUpload.title")}>
+    <main class="container mx-auto">
+        <section>
+            <h1>{t("imageUpload.heading")}</h1>
+
+            <p class="mb-4">{t("imageUpload.description")}</p>
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                class="grid gap-4"
+            >
+                <div>
+                    <label
+                        class="flex items-center justify-center w-full h-32 border-2 border-dashed rounded-md cursor-pointer border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors"
+                        for="file"
+                    >
+                        <div class="text-center">
+                            <svg
+                                class="mx-auto h-12 w-12 text-gray-400"
+                                stroke="currentColor"
+                                fill="none"
+                                viewBox="0 0 48 48"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L40 32"
+                                ></path>
+                            </svg>
+                            <p
+                                id="imageUploadBtnLabel"
+                                class="mt-1 text-sm text-gray-600"
+                            >
+                                {t("imageUpload.label")}
+                            </p>
+                            <p
+                                id="imageUploadBtnAnotherLabel"
+                                class="mt-1 text-sm text-gray-600 hidden"
+                            >
+                                {t("imageUpload.anotherLabel")}
+                            </p>
+                        </div>
+                        <input
+                            type="file"
+                            id="file"
+                            name="file"
+                            class="sr-only"
+                        />
+                    </label>
+                </div>
+
+                <!-- Image Preview Section (initially hidden) -->
+                <div
+                    id="imagePreviewContainer"
+                    class="hidden mt-4 flex flex-col items-center"
+                >
+                    <img
+                        id="imagePreview"
+                        src="#"
+                        alt="Image Preview"
+                        class="max-w-full h-auto max-h-64 rounded-md shadow-md"
+                    />
+                    <button
+                        type="button"
+                        id="clearImageButton"
+                        class="mt-2 px-3 py-1 text-sm text-red-600 bg-red-100 rounded-md hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                    >
+                        {t("imageUpload.clearImage")}
+                    </button>
+                </div>
+
+                <!-- Submit Button (initially hidden) -->
+                <div
+                    id="submitButtonContainer"
+                    class="hidden group w-fit mx-auto"
+                >
+                    <button
+                        type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        {t("imageUpload.button")}
+                    </button>
+                </div>
+            </form>
+
+            <div id="uploadStatus" class="mt-4 text-sm">
+                <!-- Upload status animation will appear here -->
+                <div
+                    id="uploading"
+                    class="hidden flex items-center justify-center"
+                >
+                    <svg
+                        class="animate-spin h-5 w-5 text-blue-600 mr-3"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l2-2.647z"
+                        ></path>
+                    </svg>
+                    Uploading...
+                </div>
+                <div
+                    id="success"
+                    class="hidden flex items-center justify-center text-green-600"
+                >
+                    <svg
+                        class="h-5 w-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                    Upload successful!
+                </div>
+                <div
+                    id="error"
+                    class="hidden flex items-center justify-center text-red-600"
+                >
+                    <svg
+                        class="h-5 w-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                    Upload failed.
+                </div>
+                <div
+                    id="message"
+                    class="hidden text-center text-sm text-gray-600"
+                >
+                    <!-- Specific error or success messages -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script is:inline>
+        const uploadingStatus = document.getElementById("uploading");
+        const successStatus = document.getElementById("success");
+        const errorStatus = document.getElementById("error");
+        const messageStatus = document.getElementById("message");
+        const form = document.querySelector("form");
+        const fileInput = document.getElementById("file");
+        const uploadStatus = document.getElementById("uploadStatus");
+        const imagePreviewContainer = document.getElementById(
+            "imagePreviewContainer",
+        );
+        const imagePreview = document.getElementById("imagePreview");
+        const clearImageButton = document.getElementById("clearImageButton");
+        const submitButtonContainer = document.getElementById(
+            "submitButtonContainer",
+        );
+        const imageUploadBtnLabel = document.getElementById(
+            "imageUploadBtnLabel",
+        );
+        const imageUploadBtnAnotherLabel = document.getElementById(
+            "imageUploadBtnAnotherLabel",
+        );
+
+        const toggleElmVisiblity = (elm) => {
+            if (elm.classList.contains("hidden")) {
+                elm.classList.remove("hidden");
+            } else {
+                elm.classList.add("hidden");
+            }
+        };
+
+        const setElmVisible = (elm) => {
+            if (elm.classList.contains("hidden")) {
+                elm.classList.remove("hidden");
+            }
+        };
+
+        const setElmHidden = (elm) => {
+            if (!elm.classList.contains("hidden")) {
+                elm.classList.add("hidden");
+            }
+        };
+
+        const setUploadBtnAnotherLabelVisibilty = (visible) => {
+            if (visible) {
+                setElmHidden(imageUploadBtnLabel);
+                setElmVisible(imageUploadBtnAnotherLabel);
+            }
+            if (!visible) {
+                setElmVisible(imageUploadBtnLabel);
+                setElmHidden(imageUploadBtnAnotherLabel);
+            }
+        };
+
+        const clearImage = () => {
+            imagePreview.src = "#";
+            setElmHidden(imagePreviewContainer);
+            setElmHidden(submitButtonContainer);
+            // Clear status messages/animations
+            uploadStatus
+                .querySelectorAll("div")
+                .forEach((el) => setElmHidden(el));
+            messageStatus.textContent = "";
+            setUploadBtnAnotherLabelVisibilty(false);
+        };
+
+        fileInput.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    setElmVisible(imagePreviewContainer);
+                    setElmVisible(submitButtonContainer);
+                };
+                reader.readAsDataURL(file);
+                setUploadBtnAnotherLabelVisibilty(true);
+            } else {
+                clearImage();
+            }
+        });
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            setElmVisible(uploadingStatus);
+            setElmHidden(successStatus);
+            setElmHidden(errorStatus);
+            setElmHidden(messageStatus);
+            messageStatus.textContent = "";
+
+            try {
+                const response = await fetch(window.location.href, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    setElmHidden(uploadingStatus);
+                    setElmVisible(successStatus);
+                    messageStatus.textContent =
+                        result.message || "File uploaded successfully!";
+                    setElmVisible(messageStatus);
+                    messageStatus.className =
+                        "mt-4 text-sm text-green-600 text-center";
+                    console.log("Upload successful:", result);
+                } else {
+                    setElmHidden(uploadingStatus);
+                    setElmVisible(errorStatus);
+                    messageStatus.textContent =
+                        result.message || "Upload failed.";
+                    setElmVisible(messageStatus);
+                    messageStatus.className =
+                        "mt-4 text-sm text-red-600 text-center";
+                    console.error("Upload failed:", result);
+                }
+            } catch (error) {
+                setElmHidden(uploadingStatus);
+                setElmVisible(errorStatus);
+                messageStatus.textContent =
+                    "Upload failed due to a network or server error.";
+                setElmVisible(messageStatus);
+                messageStatus.className =
+                    "mt-4 text-sm text-red-600 text-center";
+                console.error("Fetch error:", error);
+            }
+        });
+
+        clearImageButton.addEventListener("click", () => {
+            fileInput.value = ""; // Clear the file input
+            clearImage();
+        });
+    </script>
+</Layout>
