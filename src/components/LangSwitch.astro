@@ -1,9 +1,9 @@
 ---
-import { LOCALES, getLocalizedPathname } from "../i18n/utils";
+import { DEFAULT_LOCALE, LOCALES, getLocalizedPathname } from "../i18n/utils";
 
 const { pathname } = Astro.url;
 
-const lang = Astro.params?.lang || "nl";
+const lang = Astro.params?.lang || DEFAULT_LOCALE;
 ---
 
 <ul class="flex gap-1 w-min">
