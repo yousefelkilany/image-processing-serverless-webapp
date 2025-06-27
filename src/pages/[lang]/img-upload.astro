@@ -1,4 +1,5 @@
 ---
+import ImagesGallery from "../../components/ImagesGallery.astro";
 import ImageUploadForm from "../../components/ImageUploadForm";
 import { getLangFromUrl, useTranslations } from "../../i18n/utils";
 import Layout from "../../layouts/Layout.astro";
@@ -6,148 +7,36 @@ import Layout from "../../layouts/Layout.astro";
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
-if (Astro.request.method === "POST") {
-    try {
-        const data = await Astro.request.formData();
-        const file = data.get("file");
-
-        if (file && typeof file === "object" && file.name) {
-            // Here you would handle the file upload, e.g., save it to disk, upload to cloud storage, etc.
-            // For demonstration, we'll just acknowledge receipt.
-            console.log(
-                "Received file:",
-                file.name,
-                "of type",
-                file.type,
-                "and size",
-                file.size,
-            );
-            return new Response(
-                JSON.stringify({
-                    message: "File uploaded successfully!",
-                    filename: file.name,
-                }),
-                {
-                    status: 200,
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                },
-            );
-        } else {
-            return new Response(
-                JSON.stringify({
-                    message: "No file uploaded or invalid file data.",
-                }),
-                {
-                    status: 400,
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                },
-            );
-        }
-    } catch (error) {
-        console.error("Error handling upload:", error);
-        return new Response(
-            JSON.stringify({ message: "Error processing file upload." }),
-            {
-                status: 500,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            },
-        );
-    }
-}
+let img_object_key =
+    "856c9053-ece5-4d85-a97f-e7de78d80732-gpt2_124M_loss.png";
+const CDN_BASE_URL = "https://cdn.yousefelkilany.com";
 ---
 
-<Layout title={t("imageUpload.title")}>
+<Layout title={t("imageUpload.title")} lang={lang}>
     <main class="container mx-auto">
         <section>
             <h1>{t("imageUpload.heading")}</h1>
 
             <p class="mb-4">{t("imageUpload.description")}</p>
 
-            <ImageUploadForm t={t} client:load />
+            <ImageUploadForm t={t} client:load  />
 
-            <div id="uploadStatus" class="mt-4 text-sm">
-                <!-- Upload status animation will appear here -->
-                <div
-                    id="uploading"
-                    class="hidden flex items-center justify-center"
-                >
-                    <svg
-                        class="animate-spin h-5 w-5 text-blue-600 mr-3"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                    >
-                        <circle
-                            class="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path
-                            class="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l2-2.647z"
-                        ></path>
-                    </svg>
-                    Uploading...
-                </div>
-
-                <div
-                    id="success"
-                    class="hidden flex items-center justify-center text-green-600"
-                >
-                    <svg
-                        class="h-5 w-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        ></path>
-                    </svg>
-                    Upload successful!
-                </div>
-
-                <div
-                    id="error"
-                    class="hidden flex items-center justify-center text-red-600"
-                >
-                    <svg
-                        class="h-5 w-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        ></path>
-                    </svg>
-                    Upload failed.
-                </div>
-
-                <div
-                    id="message"
-                    class="hidden text-center text-sm text-gray-600"
-                >
-                    <!-- Specific error or success messages -->
-                </div>
-            </div>
+            <ImagesGallery
+                img_data={[
+                    {
+                        src: `${CDN_BASE_URL}/resized-400x400/${img_object_key}`,
+                        name: "400x400",
+                    },
+                    {
+                        src: `${CDN_BASE_URL}/resized-200x200/${img_object_key}`,
+                        name: "200x200",
+                    },
+                    {
+                        src: `${CDN_BASE_URL}/resized-100x100/${img_object_key}`,
+                        name: "100x100",
+                    },
+                ]}
+            />
         </section>
     </main>
 
@@ -228,12 +117,6 @@ if (Astro.request.method === "POST") {
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            const formData = new FormData(form);
-            // console.log(`${JSON.stringify(formData)}`)
-            // console.log(formData)
-
-            // formData.append('image', image);
-
             setElmVisible(uploadingStatus);
             setElmHidden(successStatus);
             setElmHidden(errorStatus);
@@ -241,20 +124,13 @@ if (Astro.request.method === "POST") {
             messageStatus.textContent = "";
 
             try {
-                // const response = await fetch(window.location.href, {
-                //     method: "POST",
-                //     body: formData,
-                // });
-                // const result = await response.json();
-                // console.log(result)
-
+                const formData = new FormData(form);
                 const responseApi = await fetch("/api/imageUpload", {
                     method: "POST",
                     body: formData,
                 });
-                const resultApi = await responseApi.json();
-                console.log(resultApi);
 
+                const resultApi = await responseApi.json();
                 if (responseApi.ok) {
                     setElmHidden(uploadingStatus);
                     setElmVisible(successStatus);
@@ -287,7 +163,7 @@ if (Astro.request.method === "POST") {
         });
 
         clearImageButton.addEventListener("click", () => {
-            fileInput.value = ""; // Clear the file input
+            fileInput.value = "";
             clearImage();
         });
     </script>

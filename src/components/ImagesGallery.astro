@@ -1,0 +1,58 @@
+---
+import ImageGalleryCard from "./ImageGalleryCard.astro";
+
+const { img_data } = Astro.props;
+---
+
+<section class="mt-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Recent Uploads</h2>
+    <div id="imagesGallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {
+            img_data.map((img: any) => (
+                <ImageGalleryCard
+                    key={img.name}
+                    src={img.src}
+                    name={img.name}
+                />
+            ))
+        }
+    </div>
+
+    <div
+        id="imageModal"
+        class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden"
+    >
+        <div class="relative">
+            <img
+                id="modalImage"
+                src=""
+                alt="Show Image"
+                class="max-w-full max-h-screen object-contain"
+            />
+        </div>
+    </div>
+</section>
+
+<script is:inline>
+    // Gallery Modal functionality
+    const galleryItems = document.querySelectorAll("#imagesGallery .group");
+    const imageModal = document.getElementById("imageModal");
+    const modalImage = document.getElementById("modalImage");
+
+    const closeImageModal = () => {
+        imageModal.classList.add("hidden");
+        modalImage.src = "";
+    };
+
+    galleryItems.forEach((item) => {
+        item.addEventListener("click", () => {
+            console.log(item);
+            modalImage.src = item.children[0].getAttribute("data-fullsize-src");
+            imageModal.classList.remove("hidden");
+        });
+    });
+
+    imageModal.addEventListener("click", (event) => {
+        if (event.target === imageModal) closeImageModal();
+    });
+</script>

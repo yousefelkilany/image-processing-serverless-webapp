@@ -16,14 +16,17 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
     // Do something with the data, then return a success response
-    const imageURLReponse = await uploadImage(image);
-    if (!imageURLReponse?.object_key)
-        return new Response(
-            JSON.stringify({
-                message: imageURLReponse?.error ?? imageURLReponse?.message,
-            }),
-            { status: 400 }
-        );
+    // const imageURLReponse = await uploadImage(image);
+    // if (!imageURLReponse?.object_key)
+    //     return new Response(
+    //         JSON.stringify({
+    //             message: imageURLReponse?.error ?? imageURLReponse?.message,
+    //         }),
+    //         { status: 400 }
+    //     );
+    const imageURLReponse = {
+        object_key: "856c9053-ece5-4d85-a97f-e7de78d80732-gpt2_124M_loss.png"
+    };
 
     return new Response(
         JSON.stringify({

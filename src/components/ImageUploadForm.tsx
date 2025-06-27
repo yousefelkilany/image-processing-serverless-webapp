@@ -93,6 +93,83 @@ export default function ImageUploadForm(props: { t: any }) {
                     {t("imageUpload.button")}
                 </button>
             </div>
+
+
+            <div id="uploadStatus" className="mt-4 text-sm">
+                <div
+                    id="uploading"
+                    className="hidden flex items-center justify-center"
+                >
+                    <svg
+                        className="animate-spin h-5 w-5 text-blue-600 mr-3"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l2-2.647z"
+                        ></path>
+                    </svg>
+                    Uploading...
+                </div>
+
+                <div
+                    id="success"
+                    className="hidden flex items-center justify-center text-green-600"
+                >
+                    <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                    Upload successful!
+                </div>
+
+                <div
+                    id="error"
+                    className="hidden flex items-center justify-center text-red-600"
+                >
+                    <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                    Upload failed.
+                </div>
+
+                <div
+                    id="message"
+                    className="hidden text-center text-sm text-gray-600"
+                >
+                </div>
+            </div>
         </form>
     );
 }
