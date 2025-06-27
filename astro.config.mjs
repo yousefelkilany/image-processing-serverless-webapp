@@ -2,7 +2,6 @@ import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
 import mdx from "@astrojs/mdx";
-import alpinejs from "@astrojs/alpinejs";
 import { DEFAULT_LOCALE, LOCALES } from "./src/i18n/utils";
 
 import react from "@astrojs/react";
@@ -23,7 +22,7 @@ export default defineConfig({
       defaultLocale: DEFAULT_LOCALE,
       locales: LOCALES,
     },
-  }), mdx(), alpinejs({ entrypoint: "/src/entrypoint" }), react()],
+  }), mdx(), react()],
 
   prefetch: true,
   output: "server",
@@ -31,8 +30,15 @@ export default defineConfig({
     imageService: 'cloudflare'
   }),
   vite: {
-    build: {
-      minify: false,
+    resolve: {
+      // Use react-dom/server.edge instead of react-dom/server.browser for React 19.
+      // Without this, MessageChannel from node:worker_threads needs to be polyfilled.
+      alias: import.meta.env.PROD && {
+        "react-dom/server": "react-dom/server.edge",
+      },
     },
+    // build: {
+    //   minify: false,
+    // },
   },
 });

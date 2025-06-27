@@ -4,9 +4,7 @@ export const DEFAULT_LOCALE = "en";
 
 export const LOCALES = {
   en: "en-US",
-  ar: "ar-EG",
-  nl: "be-nl",
-  fr: "be-fr",
+  ar: "ar-EG"
 };
 
 export type UiType = keyof typeof ui;
