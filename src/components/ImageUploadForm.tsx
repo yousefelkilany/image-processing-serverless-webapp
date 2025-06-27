@@ -65,23 +65,27 @@ export default function ImageUploadForm(props: { t: any }) {
 
             <div
                 id="imagePreviewContainer"
-                className="hidden mt-4 flex flex-col items-center"
+                className="hidden mt-4 flex flex-col items-center relative group overflow-hidden rounded-lg cursor-pointer"
             >
                 <img
                     id="imagePreview"
                     src="#"
                     alt="Image Preview"
-                    className="max-w-full h-auto max-h-64 rounded-md shadow-md"
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+            </div>
+
+            <div
+                id="clearImageButton"
+                className="hidden flex flex-col items-center"
+            >
                 <button
                     type="button"
-                    id="clearImageButton"
                     className="mt-2 px-3 py-1 text-sm text-red-600 bg-red-100 rounded-md hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                 >
                     {t("imageUpload.clearImageBtn")}
                 </button>
             </div>
-
             <div
                 id="submitButtonContainer"
                 className="hidden group w-fit mx-auto"
@@ -95,10 +99,11 @@ export default function ImageUploadForm(props: { t: any }) {
             </div>
 
 
-            <div id="uploadStatus" className="mt-4 text-sm">
+            <div id="pendingStatus" className="mt-4 text-sm">
                 <div
-                    id="uploading"
+                    id="pending"
                     className="hidden flex items-center justify-center"
+                    style={{ fontSize: "1.25em" }}
                 >
                     <svg
                         className="animate-spin h-5 w-5 text-blue-600 mr-3"
@@ -119,12 +124,13 @@ export default function ImageUploadForm(props: { t: any }) {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l2-2.647z"
                         ></path>
                     </svg>
-                    Uploading...
+                    <span id="pending-msg"> Uploading image... </span>
                 </div>
 
                 <div
                     id="success"
                     className="hidden flex items-center justify-center text-green-600"
+                    style={{ fontSize: "1.25em" }}
                 >
                     <svg
                         className="h-5 w-5 mr-2"
@@ -167,6 +173,7 @@ export default function ImageUploadForm(props: { t: any }) {
                 <div
                     id="message"
                     className="hidden text-center text-sm text-gray-600"
+                    style={{ fontSize: "1.25em" }}
                 >
                 </div>
             </div>

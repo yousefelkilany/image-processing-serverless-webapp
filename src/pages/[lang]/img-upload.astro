@@ -6,10 +6,6 @@ import Layout from "../../layouts/Layout.astro";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-
-let img_object_key =
-    "856c9053-ece5-4d85-a97f-e7de78d80732-gpt2_124M_loss.png";
-const CDN_BASE_URL = "https://cdn.yousefelkilany.com";
 ---
 
 <Layout title={t("imageUpload.title")} lang={lang}>
@@ -19,35 +15,27 @@ const CDN_BASE_URL = "https://cdn.yousefelkilany.com";
 
             <p class="mb-4">{t("imageUpload.description")}</p>
 
-            <ImageUploadForm t={t} client:load  />
+            <ImageUploadForm t={t} client:load />
 
             <ImagesGallery
                 img_data={[
-                    {
-                        src: `${CDN_BASE_URL}/resized-400x400/${img_object_key}`,
-                        name: "400x400",
-                    },
-                    {
-                        src: `${CDN_BASE_URL}/resized-200x200/${img_object_key}`,
-                        name: "200x200",
-                    },
-                    {
-                        src: `${CDN_BASE_URL}/resized-100x100/${img_object_key}`,
-                        name: "100x100",
-                    },
+                    { src: null, name: "400x400" },
+                    { src: null, name: "200x200" },
+                    { src: null, name: "100x100" },
                 ]}
             />
         </section>
     </main>
 
     <script is:inline>
-        const uploadingStatus = document.getElementById("uploading");
+        const pendingStatus = document.getElementById("pending");
+        const pendingStatusMsg = document.getElementById("pending-msg");
         const successStatus = document.getElementById("success");
         const errorStatus = document.getElementById("error");
         const messageStatus = document.getElementById("message");
         const form = document.querySelector("form");
         const fileInput = document.getElementById("file");
-        const uploadStatus = document.getElementById("uploadStatus");
+        const pendingStatusMsgs = document.getElementById("pendingStatus");
         const imagePreviewContainer = document.getElementById(
             "imagePreviewContainer",
         );
@@ -89,12 +77,13 @@ const CDN_BASE_URL = "https://cdn.yousefelkilany.com";
         const clearImage = () => {
             imagePreview.src = "#";
             setElmHidden(imagePreviewContainer);
+            setElmHidden(clearImageButton);
             setElmHidden(submitButtonContainer);
             // Clear status messages/animations
-            uploadStatus
+            pendingStatusMsgs
                 .querySelectorAll("div")
                 .forEach((el) => setElmHidden(el));
-            messageStatus.textContent = "";
+            setElmHidden(messageStatus);
             setUploadBtnAnotherLabelVisibilty(false);
         };
 
@@ -105,6 +94,7 @@ const CDN_BASE_URL = "https://cdn.yousefelkilany.com";
                 reader.onload = (e) => {
                     imagePreview.src = e.target.result;
                     setElmVisible(imagePreviewContainer);
+                    setElmVisible(clearImageButton);
                     setElmVisible(submitButtonContainer);
                 };
                 reader.readAsDataURL(file);
@@ -114,14 +104,30 @@ const CDN_BASE_URL = "https://cdn.yousefelkilany.com";
             }
         });
 
+        const updateImagesGallery = (img_object_key) => {
+            const CDN_BASE_URL = "https://cdn.yousefelkilany.com";
+            const galleryItems = document.querySelectorAll(
+                "#imagesGallery .group",
+            );
+            ["400x400", "200x200", "100x100"].forEach((imgSize, idx) => {
+                const imgSrc = `${CDN_BASE_URL}/resized-${imgSize}/${img_object_key}`;
+                galleryItems[idx].children[0].setAttribute("src", imgSrc);
+                galleryItems[idx].children[0].setAttribute(
+                    "data-fullsize-src",
+                    imgSrc,
+                );
+            });
+            setElmHidden(pendingStatus);
+        };
+
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            setElmVisible(uploadingStatus);
+            setElmVisible(pendingStatus);
+            pendingStatusMsg.textContent = "Uploading image...";
             setElmHidden(successStatus);
             setElmHidden(errorStatus);
             setElmHidden(messageStatus);
-            messageStatus.textContent = "";
 
             try {
                 const formData = new FormData(form);
@@ -132,26 +138,28 @@ const CDN_BASE_URL = "https://cdn.yousefelkilany.com";
 
                 const resultApi = await responseApi.json();
                 if (responseApi.ok) {
-                    setElmHidden(uploadingStatus);
                     setElmVisible(successStatus);
+                    setElmVisible(messageStatus);
                     messageStatus.textContent =
                         resultApi.message || "File uploaded successfully!";
-                    setElmVisible(messageStatus);
                     messageStatus.className =
                         "mt-4 text-sm text-green-600 text-center";
+                    pendingStatusMsg.textContent =
+                        "processing and fetching images...";
+                    setTimeout(updateImagesGallery, 7500, resultApi.object_key);
                     console.log("Upload successful:", resultApi);
                 } else {
-                    setElmHidden(uploadingStatus);
+                    setElmHidden(pendingStatus);
                     setElmVisible(errorStatus);
+                    setElmVisible(messageStatus);
                     messageStatus.textContent =
                         resultApi.message || "Upload failed.";
-                    setElmVisible(messageStatus);
                     messageStatus.className =
                         "mt-4 text-sm text-red-600 text-center";
                     console.error("Upload failed:", resultApi);
                 }
             } catch (error) {
-                setElmHidden(uploadingStatus);
+                setElmHidden(pendingStatus);
                 setElmVisible(errorStatus);
                 messageStatus.textContent =
                     "Upload failed due to a network or server error.";

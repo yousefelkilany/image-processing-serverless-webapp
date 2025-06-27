@@ -6,7 +6,10 @@ const { img_data } = Astro.props;
 
 <section class="mt-8">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Recent Uploads</h2>
-    <div id="imagesGallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div
+        id="imagesGallery"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+    >
         {
             img_data.map((img: any) => (
                 <ImageGalleryCard
@@ -46,10 +49,15 @@ const { img_data } = Astro.props;
 
     galleryItems.forEach((item) => {
         item.addEventListener("click", () => {
-            console.log(item);
             modalImage.src = item.children[0].getAttribute("data-fullsize-src");
             imageModal.classList.remove("hidden");
         });
+    });
+
+    const uploadImagePreview = document.getElementById("imagePreview");
+    uploadImagePreview.addEventListener("click", () => {
+        modalImage.src = uploadImagePreview.getAttribute("src");
+        imageModal.classList.remove("hidden");
     });
 
     imageModal.addEventListener("click", (event) => {

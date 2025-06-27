@@ -3,6 +3,15 @@ const API_ENDPOINT = 'https://2y5mxadw47.execute-api.us-east-1.amazonaws.com/v1/
 export const prerender = false; // Not needed in 'server' mode
 import type { APIRoute } from "astro";
 
+const mockUploadImage = async (_image: any) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return {
+        object_key: "856c9053-ece5-4d85-a97f-e7de78d80732-gpt2_124M_loss.png",
+        error: "mock error",
+        message: "mock message"
+    };
+}
+
 export const POST: APIRoute = async ({ request }) => {
     const data = await request.formData();
     const image = data.get("image");
@@ -16,22 +25,21 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
     // Do something with the data, then return a success response
-    // const imageURLReponse = await uploadImage(image);
-    // if (!imageURLReponse?.object_key)
-    //     return new Response(
-    //         JSON.stringify({
-    //             message: imageURLReponse?.error ?? imageURLReponse?.message,
-    //         }),
-    //         { status: 400 }
-    //     );
-    const imageURLReponse = {
-        object_key: "856c9053-ece5-4d85-a97f-e7de78d80732-gpt2_124M_loss.png"
-    };
+    // const imageURLReponse = await mockUploadImage(image);
+    const imageURLReponse = await uploadImage(image);
+    if (!imageURLReponse?.object_key)
+        return new Response(
+            JSON.stringify({
+                message: imageURLReponse?.error ?? imageURLReponse?.message,
+            }),
+            { status: 400 }
+        );
+
 
     return new Response(
         JSON.stringify({
-            message: "Success!",
-            ...imageURLReponse
+            ...imageURLReponse,
+            message: "Success!"
         }),
         { status: 200 }
     );
