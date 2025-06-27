@@ -20,6 +20,7 @@ This project demonstrates a scalable, event-driven, and cost-effective serverles
 *   **AWS CloudWatch**: For logging and monitoring.
 *   **Amazon API Gateway**: To expose a public REST API endpoint for clients to request upload URLs.
 *   **AWS Lambda**: For running the application logic for both generating pre-signed URLs and processing images.
+*   **AWS CloudFront**: For Exposing processed images for public access, and use as a CDN.
 *   **Pillow (PIL)**: The image processing library used for resizing.
 
 ## How It Works
@@ -85,6 +86,8 @@ I set it up manually in the AWS Console, but also it can be automated with IaC t
     *   For the `ImageProcessingInvokerRole-SAA-Manara`, nothing much besides proper permissions and simple python script that invoke step function.
 4.  **Configure S3 Trigger**: Configure the source S3 bucket to trigger the `ImageProcessingInvokerLambda-SAA-Manara` on `s3:ObjectCreated:Put` events.
 5.  **Set up API Gateway**: Create a REST API, I added a `/upload-image` resource with a `POST` method, and integrate it with the `GeneratePresignedURL-SAA-Manara` using Lambda Proxy Integration. **Enabled CORS**. Deployed the API to a stage `v1`.
+6.  **Set up CloudFront**: From CloudFront service in the AWS Console, create a new distribution and select S3 destination bucket as Origin domain. AWS will prompt for automatically changing bucket policies to permit only cloudfront for accesing the bucket while it maintains private. You'll be assigned a public url for accessing your files via path like normal.
+
 
 ## Usage
 
