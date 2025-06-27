@@ -82,18 +82,7 @@ export const POST: APIRoute = async ({ request }) => {
   const emailParams = new EmailParams()
     .setFrom(sentFrom)
     .setTo(recipients)
-    .setSubject(sanitizedData.topic)
-    .setTemplateId("insert template id")
-    .setVariables([
-      {
-        email: EMAIL,
-        substitutions: [
-          { var: "from", value: sanitizedData.name },
-          { var: "fromEmail", value: sanitizedData.email },
-          { var: "message", value: sanitizedData.message },
-        ],
-      },
-    ]);
+    .setSubject(sanitizedData.topic);
 
   // send mail
   try {

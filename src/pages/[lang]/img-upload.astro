@@ -175,14 +175,6 @@ if (Astro.request.method === "POST") {
             "imageUploadBtnAnotherLabel",
         );
 
-        const toggleElmVisiblity = (elm) => {
-            if (elm.classList.contains("hidden")) {
-                elm.classList.remove("hidden");
-            } else {
-                elm.classList.add("hidden");
-            }
-        };
-
         const setElmVisible = (elm) => {
             if (elm.classList.contains("hidden")) {
                 elm.classList.remove("hidden");
