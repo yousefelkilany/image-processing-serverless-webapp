@@ -2,7 +2,7 @@ export const ui = {
   en: {
     "imageUpload.title": "Image Upload",
     "imageUpload.heading": "Image Upload",
-    "imageUpload.description": "Image Upload service description goes here, just enough for user to know, generate via gemini",
+    "imageUpload.description": "",
     "imageUpload.button": "Upload image",
     "imageUpload.label": "Upload image",
     "imageUpload.anotherLabel": "Upload another image",
@@ -115,7 +115,7 @@ export const ui = {
   ar: {
     "imageUpload.title": "رفع الصورة",
     "imageUpload.heading": "رفع الصورة",
-    "imageUpload.description": "وصف خدمة رفع الصورة يذهب هنا، يكفي للمستخدم لمعرفته، تم إنشاؤه عبر Gemini",
+    "imageUpload.description": "",
     "imageUpload.button": "رفع الصورة",
     "imageUpload.clearImageBtn": "مسح الصورة",
     "imageUpload.label": "رفع صورة",

@@ -1,0 +1,32 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "lambda:InvokeFunction"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": "logs:CreateLogGroup",
+            "Resource": "arn:aws:logs:us-east-1:084828586375:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:us-east-1:084828586375:log-group:/aws/lambda/ImageProcessingInvokerLambda-SAA-Manara:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "states:StartExecution",
+            "Resource": "arn:aws:states:us-east-1:084828586375:stateMachine:ImageResizeStep-SAA-Manara"
+        }
+    ]
+}
