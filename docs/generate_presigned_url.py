@@ -1,84 +1,78 @@
 import boto3
 import os
+from PIL import Image
+from io import BytesIO
 import logging
 import json
-import uuid
-from base64 import b64decode
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 s3_client = boto3.client("s3")
-SOURCE_BUCKET = os.environ["SOURCE_BUCKET"]
+
+HEIGHT, WIDTH = 400, 400
+
+
+def resize_image(image_BytesIO, height, width):
+    """
+    Resizes an image to a maximum dimension of 400x400 pixels.
+    """
+    with Image.open(image_BytesIO) as image:
+        image.thumbnail((height, width))
+        resized_BytesIO = BytesIO()
+        image.save(resized_BytesIO, format=image.format)
+        resized_BytesIO.seek(0)
+        return resized_BytesIO
+
+
+def get_images_records(event):
+    logging.debug(event)
+    # print(event)
+
+    width = event.get("width", WIDTH)
+    height = event.get("height", HEIGHT)
+    event = event["Payload"]
+
+    try:
+        images_records = json.loads(event["body"])
+        # height = images_records.get('height', HEIGHT)
+        # width = images_records.get('width', WIDTH)
+        images_records = images_records["Records"]
+        return images_records, width, height
+    except:
+        ...
+
+    try:
+        images_records = event["Records"]
+        return images_records, width, height
+    except:
+        ...
 
 
 def handler(event, context):
-    # print(f'{event = }')
-    try:
-        # Parse request body
-        if event.get("isBase64Encoded", False):
-            # print("body encoded b64")
-            body = json.loads(b64decode(event.get("body", "{}")))
-            # body = json.loads(event.get('body', '{}').encode('utf-8').decode('utf-8-sig').replace("'", '"'))
-        else:
-            body = json.loads(event.get("body", "{}"))
+    images_records, width, height = get_images_records(event)
+    for record in images_records:
+        # Get bucket and key from the S3 event
+        upload_bucket = record["s3"]["bucket"]["name"]
+        upload_key = record["s3"]["object"]["key"]
+        save_key = f"resized-{width}x{height}/{upload_key}"
 
-        print(f"{body = }")
-        filename = body.get("filename")
-        print(f"{filename = }")
-        # width = body.get('width')
-        # height = body.get('height')
+        logger.info(f"Downloading [[{upload_key}]] from bucket [[{upload_bucket}]].")
+        # Download the file from S3 to the Lambda /tmp directory
+        uploaded_img = BytesIO()
+        s3_client.download_fileobj(upload_bucket, upload_key, uploaded_img)
+        uploaded_img.seek(0)
 
-        if not filename:  # or not width or not height:
-            return {
-                "statusCode": 400,
-                "body": json.dumps({"error": "Missing filename, width, or height."}),
-            }
+        logger.info(f"Processing [[{upload_key}]].")
+        # Resize the image
+        resized_img = resize_image(uploaded_img, height, width)
 
-        # Generate a unique key for the S3 object to prevent overwrites
-        # The "uploads/" prefix is important for triggering the other Lambda
-        object_key = f"uploads/{uuid.uuid4()}-{filename}"
-        print(f"{object_key = }")
+        logger.info(f"Successfully resized [[{upload_key}]].")
 
-        # # Metadata to be attached to the S3 object
-        # metadata_fields = {
-        #     "x-amz-meta-width": str(width),
-        #     "x-amz-meta-height": str(height)
-        # }
+        # Upload the resized image to the destination S3 bucket
+        resized_bucket = os.environ["DEST_BUCKET"]
+        s3_client.upload_fileobj(resized_img, resized_bucket, save_key)
 
-        # Conditions to enforce on the upload
-        conditions = [
-            ["starts-with", "$key", "uploads/"],
-            # {"x-amz-meta-width": str(width)},
-            # {"x-amz-meta-height": str(height)}
-        ]
+        logger.info(f"Successfully uploaded to [[{resized_bucket}]].")
 
-        # Generate the pre-signed POST data
-        presigned_post = s3_client.generate_presigned_post(
-            Bucket=SOURCE_BUCKET,
-            Key=object_key,
-            # Fields={**metadata_fields}, # Merge metadata into fields
-            Conditions=conditions,
-            ExpiresIn=3600,  # URL expires in 1 hour
-        )
-        print(f"{presigned_post = }")
-
-        # Return the URL and the form fields
-        return {
-            "statusCode": 200,
-            # CORS headers are essential for web clients
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "POST",
-            },
-            "body": json.dumps(presigned_post),
-        }
-
-    except Exception as e:
-        print(e)
-        return {
-            "statusCode": 500,
-            "error": e,
-            "body": json.dumps({"error": "Failed to generate pre-signed URL."}),
-        }
+    return {"statusCode": 200, "body": "Image processing complete!"}

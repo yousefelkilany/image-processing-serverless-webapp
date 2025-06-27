@@ -17,7 +17,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Do something with the data, then return a success response
     const imageURLReponse = await uploadImage(image);
-    if (!imageURLReponse?.url)
+    if (!imageURLReponse?.object_key)
         return new Response(
             JSON.stringify({
                 message: imageURLReponse?.error ?? imageURLReponse?.message,
@@ -27,7 +27,8 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(
         JSON.stringify({
-            message: "Success!"
+            message: "Success!",
+            ...imageURLReponse
         }),
         { status: 200 }
     );
@@ -44,7 +45,9 @@ async function uploadImage(image: any) {
     });
 
     const response = await APIresponse.json();
-    if (response.error || !response.url)
+    console.log("response = ", JSON.stringify(response));
+    console.log(response);
+    if (!response || response.error || !response?.url)
         return response;
 
     // 2. Upload the image directly to S3 using the pre-signed data
@@ -61,6 +64,6 @@ async function uploadImage(image: any) {
     });
     const uploadResponse = await APIuploadResponse.text();
     return {
-        url: response.url
+        object_key: response.fields.key
     }
 }
