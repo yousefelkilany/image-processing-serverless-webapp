@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "cloudflare-build": "pnpm astro build && pnpm wrangler dev",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@types/alpinejs__collapse": "^3.13.4",
     "prettier": "^3.3.1",
-    "prettier-plugin-astro": "^0.14.0"
+    "prettier-plugin-astro": "^0.14.0",
+    "wrangler": "^4.22.0"
   }
 }

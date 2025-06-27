@@ -27,5 +27,12 @@ export default defineConfig({
 
   prefetch: true,
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: 'cloudflare'
+  }),
+  vite: {
+    build: {
+      minify: false,
+    },
+  },
 });

@@ -69,7 +69,7 @@ if (Astro.request.method === "POST") {
 
             <p class="mb-4">{t("imageUpload.description")}</p>
 
-            <ImageUploadForm t={t} client:load/>
+            <ImageUploadForm t={t} client:load />
 
             <div id="uploadStatus" class="mt-4 text-sm">
                 <!-- Upload status animation will appear here -->
@@ -148,7 +148,6 @@ if (Astro.request.method === "POST") {
                     <!-- Specific error or success messages -->
                 </div>
             </div>
-
         </section>
     </main>
 
@@ -248,13 +247,13 @@ if (Astro.request.method === "POST") {
                 // });
                 // const result = await response.json();
                 // console.log(result)
- 
+
                 const responseApi = await fetch("/api/imageUpload", {
                     method: "POST",
                     body: formData,
                 });
                 const resultApi = await responseApi.json();
-                console.log(resultApi)
+                console.log(resultApi);
 
                 if (responseApi.ok) {
                     setElmHidden(uploadingStatus);
